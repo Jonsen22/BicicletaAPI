@@ -14,7 +14,7 @@ sonarcloud-check:
     paths:
       - .sonar/cache
   script:
-    - mvn verify sonar:sonar -Dsonar.projectKey=Jonsen22_2021.1pm-unirio-g10
+    - mvn verify sonar:sonar
   only:
     - merge_requests
     - master
