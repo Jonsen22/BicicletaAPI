@@ -8,7 +8,7 @@ public class Controller {
 	
 	public static void getTest(Context ctx) {
 		String test = ctx.pathParam("test");
-		ctx.result(test + " " + test );
+		ctx.result(test + " " + test + " " + test );
 		ctx.status(200);
 	}
 	
