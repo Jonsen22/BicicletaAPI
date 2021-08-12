@@ -20,8 +20,6 @@ sonarcloud-check:
     - master
     - develop
 
-    
-
 deploy:
     image: ruby:latest
     script:
