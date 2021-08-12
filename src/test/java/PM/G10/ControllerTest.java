@@ -30,7 +30,7 @@ public class ControllerTest {
 	void getEchoTest() {
 		HttpResponse response = Unirest.get("http://localhost:7010/xd").asString();
 		assertEquals(200, response.getStatus());
-		assertEquals("xd xd", response.getBody());
+		assertEquals("xd xd xd", response.getBody());
 	}
 	
 	@Test
