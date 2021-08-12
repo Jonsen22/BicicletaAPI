@@ -17,7 +17,7 @@ sonarcloud-check:
     - mvn verify sonar:sonar
   only:
     - merge_requests
-    - master
+    - main
     - develop
 
 deploy:
