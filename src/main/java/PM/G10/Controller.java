@@ -14,7 +14,7 @@ public class Controller {
 	
 	public static void getRoot(Context ctx) {
 		ctx.status(200);
-		ctx.result("Isto é um eco, digite algo a mais no caminho");
+		ctx.result("Isto é um eco, digite algo a mais no caminho.");
 	}
 	
 }

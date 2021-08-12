@@ -37,6 +37,6 @@ public class ControllerTest {
 	void getRootTest() {
 		HttpResponse response = Unirest.get("http://localhost:7010/").asString();
 		assertEquals(200, response.getStatus());
-		assertEquals("Isto é um eco, digite algo a mais no caminho",response.getBody());
+		assertEquals("Isto é um eco, digite algo a mais no caminho.",response.getBody());
 	}
 }
