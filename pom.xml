@@ -92,7 +92,7 @@
 					<processTypes>
 						<!-- Tell Heroku how to launch your application -->
 						<web>web: java $JAVA_OPTS -cp target/classes:target/dependency/*
-							G10.Main</web>
+							g10.Main</web>
 					</processTypes>
 				</configuration>
 			</plugin>
