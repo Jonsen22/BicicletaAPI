@@ -1,8 +1,9 @@
-package PM.G10.util;
+package G10.util;
 
 import io.javalin.Javalin;
 import static io.javalin.apibuilder.ApiBuilder.*;
-import PM.G10.Controller;
+
+import G10.Controller;
 
 public class JavalinApp {
 	private Javalin app =

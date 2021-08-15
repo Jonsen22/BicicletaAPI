@@ -1,6 +1,6 @@
-package PM.G10;
+package G10;
 
-import PM.G10.util.JavalinApp;
+import G10.util.JavalinApp;
 
 public class Main {
 

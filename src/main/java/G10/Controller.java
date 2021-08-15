@@ -1,4 +1,4 @@
-package PM.G10;
+package G10;
 
 import io.javalin.http.Context;
 
