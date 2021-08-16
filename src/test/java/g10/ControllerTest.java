@@ -1,4 +1,4 @@
-package PM.G10;
+package g10;
 
 import static org.junit.jupiter.api.Assertions.*;
 
