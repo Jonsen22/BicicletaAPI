@@ -54,7 +54,6 @@
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
 			<version>${unirest-java.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.javalin</groupId>
