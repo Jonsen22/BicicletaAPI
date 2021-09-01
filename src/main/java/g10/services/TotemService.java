@@ -64,7 +64,6 @@ public class TotemService {
 		for (int i = 0; i < totems.size(); i++) {
 			if (totems.get(i).getId().equals(id)) {
 				totems.remove(i);
-				i--;
 			}
 		}
 		return totems;
