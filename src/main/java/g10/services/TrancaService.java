@@ -59,7 +59,7 @@ public class TrancaService {
 
 	public static void deletarTranca(Tranca tranca, List<Tranca> trancas) {
 		for (int i = 0; i < trancas.size(); i++) {
-			if (trancas.get(i).getId() == tranca.getId())
+			if (trancas.get(i).getId().equals(tranca.getId()))
 				trancas.get(i).setStatus("excluída");
 		}
 	}

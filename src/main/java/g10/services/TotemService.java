@@ -61,11 +61,7 @@ public class TotemService {
 	}
 
 	public static List<Totem> deletarTotem(String id, List<Totem> totems) {
-		for (int i = 0; i < totems.size(); i++) {
-			if (totems.get(i).getId().equals(id)) {
-				totems.remove(i);
-			}
-		}
+		totems.removeIf(totem -> totem.getId().equals(id));
 		return totems;
 	}
 
