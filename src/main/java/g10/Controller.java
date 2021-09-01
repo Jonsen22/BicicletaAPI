@@ -71,10 +71,10 @@ public class Controller {
 		// reparo)
 		String StatusBicicleta = bicicletaProcurada.getStatus();
 		if (trancaProcurada != null && bicicletaProcurada != null) {
-			if (trancaProcurada.getStatus() == TrancaStatus.LIVRE.getStatus()
-					&& (StatusBicicleta == BicicletaStatus.NOVA.getStatus()
-							|| StatusBicicleta == BicicletaStatus.EM_REPARO.getStatus()
-							|| StatusBicicleta == BicicletaStatus.EM_USO.getStatus())) {
+			if (trancaProcurada.getStatus().equals(TrancaStatus.LIVRE.getStatus())
+					&& (StatusBicicleta.equals(BicicletaStatus.NOVA.getStatus())
+							|| StatusBicicleta.equals(BicicletaStatus.EM_REPARO.getStatus())
+							|| StatusBicicleta.equals(BicicletaStatus.EM_USO.getStatus()))) {
 
 				if (StatusBicicleta == BicicletaStatus.EM_USO.getStatus()) {
 					//Passa para UC04 - devolver bicicleta (A4)
@@ -112,7 +112,7 @@ public class Controller {
 		Bicicleta bicicletaProcurada = BicicletaService.acharBicicletaPorId(Ids[0], bicicletas);
 		Tranca trancaProcurada = TrancaService.acharTrancaPorId(Ids[1], trancas);
 		if (trancaProcurada != null && bicicletaProcurada != null) {
-			if (bicicletaProcurada.getStatus() == BicicletaStatus.REPARO_SOLICITADO.getStatus()
+			if (bicicletaProcurada.getStatus().equals(BicicletaStatus.REPARO_SOLICITADO.getStatus())
 					&& trancaProcurada.getBicicleta().equals(bicicletaProcurada.getId())) {
 				trancaProcurada.setStatus(TrancaStatus.LIVRE.getStatus());
 				trancaProcurada.setBicicleta(null);
@@ -176,7 +176,7 @@ public class Controller {
 
 		if (temp != null) {
 			if (!TrancaService.trancaComBicicleta(trancas, id)) {
-				if (temp.getStatus() == BicicletaStatus.APOSENTADA.getStatus()) {
+				if (temp.getStatus().equals(BicicletaStatus.APOSENTADA.getStatus())) {
 
 					BicicletaService.deletarBicicleta(temp, bicicletas);
 					ctx.status(200);
@@ -471,7 +471,7 @@ public class Controller {
 		Tranca trancaProcurada = TrancaService.acharTrancaPorId(Ids[1], trancas);
 		if (trancaProcurada != null) {
 			if (trancaProcurada.getBicicleta() == null) {
-				if (trancaProcurada.getStatus() == TrancaStatus.REPARO_SOLICITADO.getStatus()) {
+				if (trancaProcurada.getStatus().equals(TrancaStatus.REPARO_SOLICITADO.getStatus())) {
 					redeDeTotems.forEach(totem -> totem.getTrancas().remove(trancaProcurada));
 					// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
 					ctx.status(200);
