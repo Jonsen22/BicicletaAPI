@@ -12,13 +12,13 @@ public class Bicicleta {
 	private Integer numero;
 	private String status;
 
-	public Bicicleta(String marca, String modelo, String ano, Integer numero, String status) {
+	public Bicicleta(String marca, String modelo, String ano, Integer numero) {
 		generateId();
 		this.marca = marca;
 		this.modelo = modelo;
 		this.ano = ano;
 		this.numero = numero;
-		this.status = status;
+		this.status = "Nova";
 	}
 	
 	public void setId(String id) {

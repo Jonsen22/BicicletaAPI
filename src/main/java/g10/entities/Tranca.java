@@ -13,13 +13,13 @@ public class Tranca {
 	private String modelo;
 	private String status;
 
-	public Tranca(Integer numero, String localizacao, String anoDeFabricacao, String modelo, String status) {
+	public Tranca(Integer numero, String localizacao, String anoDeFabricacao, String modelo) {
 		generateId();
 		this.numero = numero;
 		this.localizacao = localizacao;
 		this.anoDeFabricacao = anoDeFabricacao;
 		this.modelo = modelo;
-		this.status = status;
+		this.status = "Nova";
 	}
 
 	public String getId() {

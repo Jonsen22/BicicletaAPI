@@ -16,7 +16,7 @@ public class TrancaService {
 		Gson gson = new Gson();
 		Tranca tranca = gson.fromJson(body, Tranca.class);
 		Tranca trancaNova = new Tranca(tranca.getNumero(), tranca.getLocalizacao(), tranca.getAnoDeFabricacao(),
-				tranca.getModelo(), "Nova");
+				tranca.getModelo());
 
 		return trancaNova;
 	}

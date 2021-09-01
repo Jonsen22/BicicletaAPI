@@ -11,14 +11,19 @@ public class BicicletaService {
 
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
+	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
 
 	public static Bicicleta validarPostBicicleta(String body) {
 		Gson gson = new Gson();
 		Bicicleta bicicleta = gson.fromJson(body, Bicicleta.class);
-		Bicicleta BikeNova = new Bicicleta(bicicleta.getMarca(), bicicleta.getModelo(), bicicleta.getAno(),
-				bicicleta.getNumero(), "Nova");
+		if (numeros.matcher(bicicleta.getAno()).matches()) {
+//			Bicicleta BikeNova = new Bicicleta(bicicleta.getMarca(), bicicleta.getModelo(), bicicleta.getAno(),
+//					bicicleta.getNumero(), "Nova");
+			return bicicleta;
 
-		return BikeNova;
+		} else {
+			return null;
+		}
 	}
 
 	public static Bicicleta acharBicicletaPorId(String id, List<Bicicleta> bicicletas) {

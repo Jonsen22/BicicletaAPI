@@ -45,7 +45,6 @@ public class JsonHelper {
 		String IdTotem = details.get("idTotem").getAsString();
 		String IdTranca = details.get("idTranca").getAsString();
 		String[] stringArray = { IdTotem, IdTranca };
-		System.out.println(stringArray);
 		return stringArray;
 	}
 }

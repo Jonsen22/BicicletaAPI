@@ -3,7 +3,8 @@ package g10.entities;
 public enum TrancaStatus {
 	LIVRE("Livre"), 
 	NOVA("Nova"),
-	OCUPADA("Ocupada"), 
+	OCUPADA("Ocupada"),
+	REPARO_SOLICITADO("Reparo solicitado"),
 	EM_REPARO("Em reparo"), 
 	APOSENTADA("Aposentada");
 
