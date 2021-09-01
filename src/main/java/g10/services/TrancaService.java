@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import g10.entities.Tranca;
 
 public class TrancaService {
+	
+	private TrancaService() {}
 
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
@@ -63,12 +65,11 @@ public class TrancaService {
 	}
 
 	public static boolean trancaComBicicleta(List<Tranca> trancas, String id) {
-		boolean possuiBicicleta = false;
 		for (int i = 0; i < trancas.size(); i++) {
 			if (trancas.get(i).getBicicleta().equals(id))
-				return possuiBicicleta = true;
+				return true;
 		}
-		return possuiBicicleta;
+		return false;
 	}
 
 }

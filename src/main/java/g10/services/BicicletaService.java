@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import g10.entities.Bicicleta;
 
 public class BicicletaService {
+	
+	private BicicletaService() {}
 
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
@@ -17,8 +19,6 @@ public class BicicletaService {
 		Gson gson = new Gson();
 		Bicicleta bicicleta = gson.fromJson(body, Bicicleta.class);
 		if (numeros.matcher(bicicleta.getAno()).matches()) {
-//			Bicicleta BikeNova = new Bicicleta(bicicleta.getMarca(), bicicleta.getModelo(), bicicleta.getAno(),
-//					bicicleta.getNumero(), "Nova");
 			return bicicleta;
 
 		} else {

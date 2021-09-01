@@ -10,6 +10,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class JsonHelper {
+	
+	private JsonHelper() {
+	}
+	
 	public static String jsonCodigo(String id, String codigo, String mensagem) {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

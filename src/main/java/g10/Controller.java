@@ -21,27 +21,21 @@ import g10.util.JsonHelper;
 import io.javalin.http.Context;
 
 public class Controller {
+	
+	private Controller() {
+		
+	}
 
 	private static List<Bicicleta> bicicletas = new ArrayList<Bicicleta>();
 	private static List<Tranca> trancas = new ArrayList<Tranca>();
 	private static List<Totem> redeDeTotems = new ArrayList<Totem>();
 
-	private static Bicicleta bicicletaM = new Bicicleta("Caloi", "c200", "2000", 1);
-	private static Bicicleta bicicletaM2 = new Bicicleta("Caloi", "c500", "2010", 2);
-	private static Tranca trancaM = new Tranca(1, "Avenida Princesa Isabel", "2005", "nsei");
-	private static Tranca trancaM2 = new Tranca(1, "test", "2020", "nsei");
-	private static Totem totemM = new Totem("Avenida Princesa Isabel");
+	private static final String DADOS_INVALIDOS = "Dados inválidos";
+	private static final String DADOS_CADASTRADOS = "Dados cadastrados";
+	private static final String NAO_ENCONTRADO = "Não encontrado";
+
 
 	public static void getBicicleta(Context ctx) {
-//		totemM.addBicicleta(bicicletaM);
-//		totemM.addTranca(trancaM);
-//		totemM.addTranca(trancaM2);
-//		trancaM.setBicicleta(bicicletaM.getId());
-//		bicicletas.add(bicicletaM);
-//		bicicletas.add(bicicletaM2);
-//		trancas.add(trancaM);
-//		trancas.add(trancaM2);
-//		redeDeTotems.add(totemM);
 		ctx.status(200);
 		ctx.result(bicicletas.toString());
 	}
@@ -55,7 +49,7 @@ public class Controller {
 			bicicletas.add(validateResponse);
 		} else {
 			ctx.status(422);
-			ctx.result(JsonHelper.jsonCodigo("-", "422", "Dados inválidos"));
+			ctx.result(JsonHelper.jsonCodigo("-", "422", DADOS_INVALIDOS));
 		}
 
 	}
@@ -69,8 +63,8 @@ public class Controller {
 		Tranca trancaProcurada = TrancaService.acharTrancaPorId(Ids[1], trancas);
 		// Identifica se o status está de acordo com a regra de negócio(Livre/Nova/Em
 		// reparo)
-		String StatusBicicleta = bicicletaProcurada.getStatus();
 		if (trancaProcurada != null && bicicletaProcurada != null) {
+			String StatusBicicleta = bicicletaProcurada.getStatus();
 			if (trancaProcurada.getStatus().equals(TrancaStatus.LIVRE.getStatus())
 					&& (StatusBicicleta.equals(BicicletaStatus.NOVA.getStatus())
 							|| StatusBicicleta.equals(BicicletaStatus.EM_REPARO.getStatus())
@@ -92,15 +86,15 @@ public class Controller {
 							});
 					// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
 					ctx.status(200);
-					ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", "Dados cadastrados"));
+					ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
 				}
 			} else {
 				ctx.status(422);
-				ctx.result(JsonHelper.jsonCodigo(Ids[0], "422", "Dados inválidos"));
+				ctx.result(JsonHelper.jsonCodigo(Ids[0], "422", DADOS_INVALIDOS));
 			}
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(Ids[0], "404", "Dados inválidos"));
+			ctx.result(JsonHelper.jsonCodigo(Ids[0], "404", DADOS_INVALIDOS));
 		}
 
 	}
@@ -120,7 +114,7 @@ public class Controller {
 				redeDeTotems.forEach(totem -> totem.getBicicletas().remove(bicicletaProcurada));
 				// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
 				ctx.status(200);
-				ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", "Dados cadastrados"));
+				ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
 			} else {
 				ctx.status(422);
 				ctx.result(JsonHelper.jsonCodigo(Ids[0], "422",
@@ -166,7 +160,7 @@ public class Controller {
 
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -193,7 +187,7 @@ public class Controller {
 			}
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 
 	}
@@ -231,11 +225,11 @@ public class Controller {
 				break;
 			default:
 				ctx.status(422);
-				ctx.result(JsonHelper.jsonCodigo(id, "422", "Dados inválidos"));
+				ctx.result(JsonHelper.jsonCodigo(id, "422", DADOS_INVALIDOS));
 			}
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -264,7 +258,7 @@ public class Controller {
 			ctx.result(atualizado.toString());
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 
 	}
@@ -285,7 +279,7 @@ public class Controller {
 			}
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -299,7 +293,7 @@ public class Controller {
 			ctx.result(temp.toString());
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -313,7 +307,7 @@ public class Controller {
 			ctx.result(temp.toString());
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -336,7 +330,7 @@ public class Controller {
 			ctx.result(result.toString());
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -362,7 +356,7 @@ public class Controller {
 
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -381,7 +375,7 @@ public class Controller {
 			}
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -439,11 +433,11 @@ public class Controller {
 				break;
 			default:
 				ctx.status(422);
-				ctx.result(JsonHelper.jsonCodigo(id, "422", "Dados inválidos"));
+				ctx.result(JsonHelper.jsonCodigo(id, "422", DADOS_INVALIDOS));
 			}
 		} else {
 			ctx.status(404);
-			ctx.result(JsonHelper.jsonCodigo(id, "404", "Não encontrado"));
+			ctx.result(JsonHelper.jsonCodigo(id, "404", NAO_ENCONTRADO));
 		}
 	}
 
@@ -458,10 +452,10 @@ public class Controller {
 					.ifPresent(totem -> totem.addTranca(trancaProcurada));
 			// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
 			ctx.status(200);
-			ctx.result(JsonHelper.jsonCodigo(Ids[1], "200", "Dados cadastrados"));
+			ctx.result(JsonHelper.jsonCodigo(Ids[1], "200", DADOS_CADASTRADOS));
 		} else {
 			ctx.status(422);
-			ctx.result(JsonHelper.jsonCodigo(Ids[1], "422", "Dados Inválidos"));
+			ctx.result(JsonHelper.jsonCodigo(Ids[1], "422", DADOS_INVALIDOS));
 		}
 	}
 
@@ -475,7 +469,7 @@ public class Controller {
 					redeDeTotems.forEach(totem -> totem.getTrancas().remove(trancaProcurada));
 					// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
 					ctx.status(200);
-					ctx.result(JsonHelper.jsonCodigo(Ids[1], "200", "Dados cadastrados"));
+					ctx.result(JsonHelper.jsonCodigo(Ids[1], "200", DADOS_CADASTRADOS));
 				} else {
 					ctx.result(JsonHelper.jsonCodigo(Ids[1], "403",
 							"A tranca precisa estar aposentada ou com reparo solicitado"));
@@ -486,24 +480,24 @@ public class Controller {
 			}
 		} else {
 			ctx.status(422);
-			ctx.result(JsonHelper.jsonCodigo(Ids[1], "422", "Dados Inválidos"));
+			ctx.result(JsonHelper.jsonCodigo(Ids[1], "422", DADOS_INVALIDOS));
 		}
 	}
 
 	public static Bicicleta bicicletaMockDelete() {
-		Bicicleta bicicletaT = new Bicicleta("teste", "teste", "2000", 3);
+		Bicicleta bicicletaT = new Bicicleta("teste", "teste2", "2000", 3);
 		bicicletaT.setStatus(BicicletaStatus.APOSENTADA.getStatus());
 		bicicletas.add(bicicletaT);
 		return bicicletaT;
 	}
 
 	public static Bicicleta controllerMock() {
-		Bicicleta bicicletaT = new Bicicleta("teste", "teste", "2000", 3);
+		Bicicleta bicicletaT = new Bicicleta("teste3", "teste4", "2000", 3);
 		bicicletas.add(bicicletaT);
-		Tranca trancaT = new Tranca(1, "Esquina", "2000", "n sei");
+		Tranca trancaT = new Tranca(1, "Esquina1", "2000", "n sei");
 		trancaT.setBicicleta(bicicletaT.getId());
 		trancas.add(trancaT);
-		Totem totemT = new Totem("Esquina");
+		Totem totemT = new Totem("Esquina1");
 		totemT.addBicicleta(bicicletaT);
 		totemT.addTranca(trancaT);
 		redeDeTotems.add(totemT);
@@ -511,12 +505,12 @@ public class Controller {
 	}
 
 	public static String bicicletaRedeMock() {
-		Bicicleta bicicletaT = new Bicicleta("teste", "teste", "2000", 3);
+		Bicicleta bicicletaT = new Bicicleta("test5e", "teste6", "2000", 3);
 		bicicletas.add(bicicletaT);
-		Tranca trancaT = new Tranca(1, "Esquina", "2000", "n sei");
+		Tranca trancaT = new Tranca(1, "Esquina2", "2000", "n sei");
 		trancaT.setStatus(TrancaStatus.LIVRE.getStatus());
 		trancas.add(trancaT);
-		Totem totemT = new Totem("Esquina");
+		Totem totemT = new Totem("Esquina2");
 		totemT.addTranca(trancaT);
 		redeDeTotems.add(totemT);
 

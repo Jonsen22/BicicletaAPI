@@ -14,15 +14,18 @@ import io.javalin.Javalin;
 
 public class JavalinApp {
 	
+	private static final String BICICLETA_ID = "/bicicleta/:id";
+	private static final String TRANCA_ID = "/tranca/:id";
+	
 	private Javalin app =
 			Javalin.create(config -> config.defaultContentType = "application/json")
 			.routes(() -> {				
 				//bicicleta
 				path("/bicicleta", () -> get(Controller::getBicicleta));
 				path("/bicicleta", () -> post(Controller::postBicicleta));
-				path("/bicicleta/:id", () -> get(Controller::getBicicletaById));
-				path("/bicicleta/:id", () -> put(Controller::putBicicleta));
-				path("/bicicleta/:id", () -> delete(Controller::deleteBicicleta));
+				path(BICICLETA_ID, () -> get(Controller::getBicicletaById));
+				path(BICICLETA_ID, () -> put(Controller::putBicicleta));
+				path(BICICLETA_ID, () -> delete(Controller::deleteBicicleta));
 				path("/bicicleta/:id/status/:acao", () -> post(Controller::postBicicletaAlterarStatus));
 				path("/bicicleta/integrarNaRede", () -> post(Controller::postBicicletaNaRede));
 				path("/bicicleta/retirarDaRede", () -> post(Controller::postBicicletaRetirarRede));
@@ -38,9 +41,9 @@ public class JavalinApp {
 				//tranca
 				path("/tranca", () -> get(Controller::getTranca));
 				path("/tranca", () -> post(Controller::postTranca));
-				path("/tranca/:id", () -> get(Controller::getTrancaById));
-				path("/tranca/:id", () -> put(Controller::putTranca));
-				path("/tranca/:id", () -> delete(Controller::deleteTranca));
+				path(TRANCA_ID, () -> get(Controller::getTrancaById));
+				path(TRANCA_ID, () -> put(Controller::putTranca));
+				path(TRANCA_ID, () -> delete(Controller::deleteTranca));
 				path("/tranca/:id/bicicleta", () -> get(Controller::getTrancaBicicleta));
 				path("/tranca/:id/status/:acao", () -> post(Controller::postTrancaAlterarStatus));
 				path("/tranca/integrarNaRede", () -> post(Controller::postTrancaNaRede));

@@ -11,6 +11,8 @@ import com.google.gson.GsonBuilder;
 import g10.entities.Totem;
 
 public class TotemService {
+	
+	private TotemService() {}
 
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
@@ -62,6 +64,7 @@ public class TotemService {
 		for (int i = 0; i < totems.size(); i++) {
 			if (totems.get(i).getId().equals(id)) {
 				totems.remove(i);
+				i--;
 			}
 		}
 		return totems;
