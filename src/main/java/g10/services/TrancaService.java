@@ -52,7 +52,7 @@ public class TrancaService {
 
 	public static void atualizarListaTrancas(Tranca trancaAtualizada, List<Tranca> trancas) {
 		for (int i = 0; i < trancas.size(); i++) {
-			if (trancas.get(i).getId() == trancaAtualizada.getId())
+			if (trancas.get(i).getId().equals(trancaAtualizada.getId()))
 				trancas.set(i, trancaAtualizada);
 		}
 	}

@@ -55,14 +55,14 @@ public class BicicletaService {
 
 	public static void atualizarListaBicicletas(Bicicleta bicicletaAtualizada, List<Bicicleta> bicicletas) {
 		for (int i = 0; i < bicicletas.size(); i++) {
-			if (bicicletas.get(i).getId() == bicicletaAtualizada.getId())
+			if (bicicletas.get(i).getId().equals(bicicletaAtualizada.getId()))
 				bicicletas.set(i, bicicletaAtualizada);
 		}
 	}
 
 	public static void deletarBicicleta(Bicicleta bicicleta, List<Bicicleta> bicicletas) {
 		for (int i = 0; i < bicicletas.size(); i++) {
-			if (bicicletas.get(i).getId() == bicicleta.getId())
+			if (bicicletas.get(i).getId().equals(bicicleta.getId()))
 				bicicletas.get(i).setStatus("excluída");
 		}
 	}

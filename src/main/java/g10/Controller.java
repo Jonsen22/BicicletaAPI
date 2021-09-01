@@ -70,7 +70,7 @@ public class Controller {
 							|| StatusBicicleta.equals(BicicletaStatus.EM_REPARO.getStatus())
 							|| StatusBicicleta.equals(BicicletaStatus.EM_USO.getStatus()))) {
 
-				if (StatusBicicleta == BicicletaStatus.EM_USO.getStatus()) {
+				if (StatusBicicleta.equals( BicicletaStatus.EM_USO.getStatus())) {
 					//Passa para UC04 - devolver bicicleta (A4)
 				} else {
 

@@ -55,7 +55,7 @@ public class TotemService {
 
 	public static void atualizarListaTotems(Totem totemAtualizado, List<Totem> totems) {
 		for (int i = 0; i < totems.size(); i++) {
-			if (totems.get(i).getId() == totemAtualizado.getId())
+			if (totems.get(i).getId().equals(totemAtualizado.getId()))
 				totems.set(i, totemAtualizado);
 		}
 	}
