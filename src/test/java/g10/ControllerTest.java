@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import g10.entities.Bicicleta;
+import g10.entities.BicicletaStatus;
+import g10.entities.Totem;
 import g10.entities.Tranca;
 import g10.util.JavalinApp;
 import io.javalin.http.Context;
@@ -81,15 +83,11 @@ public class ControllerTest {
 	@Test
 	void putBicicletaCorrect() {
 		Bicicleta test = (Bicicleta) Controller.bicicletaAddMock("bicicleta");
-		test.setMarca("nsei");
-		test.setAno("3000");
 		HttpResponse<String> response = Unirest.put("http://localhost:7010/bicicleta/"+test.getId())
-				.body(test.toString())
+				.body("{\"ano\":\"4555\"}")
 				.asString();
 		assertEquals(200, response.getStatus());
 		
-		String jsonTest = test.toString();
-		assertEquals(jsonTest, response.getBody());
 	}
 	
 	@Test
@@ -116,14 +114,14 @@ public class ControllerTest {
 	}
 
 
-//	@Test
-//	void deleteBicicletaIncorret403Status() {
-//		Bicicleta test = Controller.bicicletaAddMock();
-//		test.setStatus(BicicletaStatus.EM_USO.getStatus());
-//		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
-//				.asString();
-//		assertEquals(403, response.getStatus());
-//	}
+	@Test
+	void deleteBicicletaIncorret403Status() {
+		Bicicleta test = (Bicicleta) Controller.bicicletaAddMock("bicicleta");
+		test.setStatus(BicicletaStatus.EM_USO.getStatus());
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
+				.asString();
+		assertEquals(403, response.getStatus());
+	}
 	
 	@Test
 	void deleteBicicletaIncorret404() {
@@ -210,4 +208,122 @@ public class ControllerTest {
 		
 		assertEquals(404, response.getStatus());
 	}
+	
+	@Test
+	void putTrancaCorrect() {
+		Tranca test = (Tranca) Controller.bicicletaAddMock("tranca");
+		HttpResponse<String> response = Unirest.put("http://localhost:7010/tranca/"+test.getId())
+				.body("{\"anoDeFabricacao\":\"2000\"}")
+				.asString();
+		assertEquals(200, response.getStatus());
+
+	}
+	
+	@Test
+	void putTrancaIncorret404() {
+		HttpResponse<String> response = Unirest.put("http://localhost:7010/tranca/"+UUID.randomUUID())
+				.asString();
+		assertEquals(404, response.getStatus());
+	}
+	
+	@Test
+	void getTrancaBicicletaCorrect() {
+		Tranca test = (Tranca) Controller.bicicletaAddMock("tranca");
+		HttpResponse<String> response = Unirest.get("http://localhost:7010/tranca/"+test.getId()+"/bicicleta")
+				.asString();
+		assertEquals(200, response.getStatus());
+	}
+
+	@Test
+	void getTrancaBicicletaIncorrect422() {
+
+		HttpResponse<String> response = Unirest.get("http://localhost:7010/tranca/"+UUID.randomUUID()+"/bicicleta")
+				.asString();
+		assertEquals(422, response.getStatus());
+	}
+	
+	@Test
+	void deleteTrancaCorrect() {
+		Tranca test = Controller.trancaUnicaMock();
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/tranca/"+test.getId())
+				.asString();
+		assertEquals(200, response.getStatus());
+	}
+	@Test
+	void deleteTrancaIncorrect403() {
+		Tranca test = Controller.trancaUnicaMock();
+		test.setBicicleta(UUID.randomUUID().toString());
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/tranca/"+test.getId())
+				.asString();
+		assertEquals(403, response.getStatus());
+	}
+	@Test
+	void deleteTrancaIncorrect404() {
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/tranca/"+UUID.randomUUID())
+				.asString();
+		assertEquals(404, response.getStatus());
+	}
+	
+	@Test
+	void postTrancaAlterarStatusCorrect() {
+		Tranca test = Controller.trancaUnicaMock();
+		String[] status = {"LIVRE","OCUPADA","REPARO_SOLICITADO","EM_REPARO","APOSENTADA"};
+		for(int i = 0; i < status.length; i++) {
+			HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/tranca/"+test.getId()+"/status/"+status[i])
+					.asJson();
+			assertEquals(200, response.getStatus());			
+		}
+	}
+	@Test
+	void postTrancaAlterarStatusIncorrect422() {
+		Tranca test = Controller.trancaUnicaMock();
+
+			HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/tranca/"+test.getId()+"/status/quebrada")
+					.asJson();
+			assertEquals(422, response.getStatus());			
+	}
+	@Test
+	void postTrancaAlterarStatusIncorrect404() {
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/tranca/"+UUID.randomUUID()+"/status/quebrada")
+				.asJson();
+		assertEquals(404, response.getStatus());			
+	}
+	
+	@Test 
+	void getAllTotemsCorrect() {
+		HttpResponse<JsonNode> response = Unirest.get("http://localhost:7010/totem")
+				.header("accept", "application/json").asJson();
+		assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	void postTotemCorrect() {
+		Totem totemT = new Totem("teste3232");
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/totem").body(totemT).asJson();
+		assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	void deleteTotemCorrect() {
+		Totem test = Controller.totemUnicoMock();
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/totem/"+test.getId())
+				.asString();
+		assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	void deleteTotemIncorrect403() {
+		Totem test = Controller.totemUnicoMock();
+		test.addTranca(new Tranca(1, "teste3213","21312","dawdwadwa"));
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/totem/"+test.getId())
+				.asString();
+		assertEquals(403, response.getStatus());
+	}
+	@Test
+	void deleteTotemIncorrect404() {
+		HttpResponse<String> response = Unirest.delete("http://localhost:7010/totem/"+UUID.randomUUID())
+				.asString();
+		assertEquals(404, response.getStatus());
+	}
+	
 }

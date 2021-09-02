@@ -167,7 +167,7 @@ public class Controller {
 		String id = ctx.pathParam("id");
 		Bicicleta temp = BicicletaService.acharBicicletaPorId(id, bicicletas);
 
-		if (temp != null || trancas.isEmpty()) {
+		if (temp != null) {
 			if (!TrancaService.trancaComBicicleta(trancas, id)) {
 				if (temp.getStatus().equals(BicicletaStatus.APOSENTADA.getStatus())) {
 
@@ -387,10 +387,9 @@ public class Controller {
 	public static void getTrancaBicicleta(Context ctx) {
 		String id = ctx.pathParam("id");
 		Tranca tranca = TrancaService.acharTrancaPorId(id, trancas);
-		Bicicleta temp = bicicletas.stream().filter(bicicleta -> tranca.getBicicleta().equals(bicicleta.getId()))
-				.findFirst().orElse(null);
-
 		if (tranca != null) {
+			Bicicleta temp = bicicletas.stream().filter(bicicleta -> tranca.getBicicleta().equals(bicicleta.getId()))
+					.findFirst().orElse(null);
 			if (temp != null) {
 				ctx.status(200);
 				ctx.result(temp.toString());
@@ -490,13 +489,31 @@ public class Controller {
 	}
 
 	public static Bicicleta bicicletaUnicaMock() {
+		bicicletas.clear();
 		Bicicleta bicicletaT = new Bicicleta("teste", "teste2", "2000", 3);
 		bicicletaT.setStatus(BicicletaStatus.APOSENTADA.getStatus());
 		bicicletas.add(bicicletaT);
 		return bicicletaT;
 	}
+	
+	public static Tranca trancaUnicaMock() {
+		trancas.clear();
+		Tranca trancaT = new Tranca(4,"teste323","5000","teste5122");		
+		trancas.add(trancaT);
+		return trancaT;
+	}
+	
+	public static Totem totemUnicoMock() {
+		redeDeTotems.clear();
+		Totem totemT = new Totem("teste3213");
+		redeDeTotems.add(totemT);
+		return totemT;
+	}
 
 	public static Object bicicletaAddMock(String objeto) {
+		bicicletas.clear();
+		trancas.clear();
+		redeDeTotems.clear();
 		Bicicleta bicicletaT = new Bicicleta("teste3", "teste4", "2000", 3);
 		bicicletas.add(bicicletaT);
 		Tranca trancaT = new Tranca(1, "Esquina1", "2000", "n sei");
