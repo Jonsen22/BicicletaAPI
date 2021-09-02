@@ -19,7 +19,10 @@ public class BicicletaService {
 		Gson gson = new Gson();
 		Bicicleta bicicleta = gson.fromJson(body, Bicicleta.class);
 		if (numeros.matcher(bicicleta.getAno()).matches()) {
-			return bicicleta;
+			Bicicleta BikeNova = new Bicicleta(bicicleta.getMarca(), bicicleta.getModelo(), bicicleta.getAno(),
+					bicicleta.getNumero());
+
+			return BikeNova ;
 
 		} else {
 			return null;

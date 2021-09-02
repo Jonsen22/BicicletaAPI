@@ -19,7 +19,10 @@ public class TrancaService {
 		Gson gson = new Gson();
 		Tranca tranca = gson.fromJson(body, Tranca.class);
 		if (numeros.matcher(tranca.getAnoDeFabricacao()).matches()) {
-			return tranca;
+			Tranca trancaNova = new Tranca(tranca.getNumero(), tranca.getLocalizacao(), tranca.getAnoDeFabricacao(),
+					tranca.getModelo());
+
+			return trancaNova;
 
 		} else {
 			return null;
