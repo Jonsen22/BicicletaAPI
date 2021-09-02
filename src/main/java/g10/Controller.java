@@ -21,9 +21,9 @@ import g10.util.JsonHelper;
 import io.javalin.http.Context;
 
 public class Controller {
-	
+
 	private Controller() {
-		
+
 	}
 
 	private static List<Bicicleta> bicicletas = new ArrayList<Bicicleta>();
@@ -33,7 +33,6 @@ public class Controller {
 	private static final String DADOS_INVALIDOS = "Dados inválidos";
 	private static final String DADOS_CADASTRADOS = "Dados cadastrados";
 	private static final String NAO_ENCONTRADO = "Não encontrado";
-
 
 	public static void getBicicleta(Context ctx) {
 		ctx.status(200);
@@ -70,8 +69,8 @@ public class Controller {
 							|| StatusBicicleta.equals(BicicletaStatus.EM_REPARO.getStatus())
 							|| StatusBicicleta.equals(BicicletaStatus.EM_USO.getStatus()))) {
 
-				if (StatusBicicleta.equals( BicicletaStatus.EM_USO.getStatus())) {
-					//Passa para UC04 - devolver bicicleta (A4)
+				if (StatusBicicleta.equals(BicicletaStatus.EM_USO.getStatus())) {
+					// Passa para UC04 - devolver bicicleta (A4)
 				} else {
 
 					bicicletaProcurada.setStatus(BicicletaStatus.DISPONIVEL.getStatus());
@@ -168,7 +167,7 @@ public class Controller {
 		String id = ctx.pathParam("id");
 		Bicicleta temp = BicicletaService.acharBicicletaPorId(id, bicicletas);
 
-		if (temp != null) {
+		if (temp != null || trancas.isEmpty()) {
 			if (!TrancaService.trancaComBicicleta(trancas, id)) {
 				if (temp.getStatus().equals(BicicletaStatus.APOSENTADA.getStatus())) {
 
@@ -318,8 +317,14 @@ public class Controller {
 	public static void postTranca(Context ctx) {
 		String body = ctx.body();
 		Tranca validateResponse = TrancaService.validarPostTranca(body);
-		ctx.json(validateResponse);
-		trancas.add(validateResponse);
+		if (validateResponse != null) {
+			ctx.status(200);
+			ctx.json(validateResponse);
+			trancas.add(validateResponse);
+		} else {
+			ctx.status(422);
+			ctx.result(JsonHelper.jsonCodigo("-", "422", DADOS_INVALIDOS));
+		}
 	}
 
 	public static void getTrancaById(Context ctx) {
@@ -484,14 +489,14 @@ public class Controller {
 		}
 	}
 
-	public static Bicicleta bicicletaMockDelete() {
+	public static Bicicleta bicicletaUnicaMock() {
 		Bicicleta bicicletaT = new Bicicleta("teste", "teste2", "2000", 3);
 		bicicletaT.setStatus(BicicletaStatus.APOSENTADA.getStatus());
 		bicicletas.add(bicicletaT);
 		return bicicletaT;
 	}
 
-	public static Bicicleta controllerMock() {
+	public static Object bicicletaAddMock(String objeto) {
 		Bicicleta bicicletaT = new Bicicleta("teste3", "teste4", "2000", 3);
 		bicicletas.add(bicicletaT);
 		Tranca trancaT = new Tranca(1, "Esquina1", "2000", "n sei");
@@ -501,7 +506,15 @@ public class Controller {
 		totemT.addBicicleta(bicicletaT);
 		totemT.addTranca(trancaT);
 		redeDeTotems.add(totemT);
-		return bicicletas.get(bicicletas.size() - 1);
+		if (objeto.equals("bicicleta")) {
+			return bicicletas.get(bicicletas.size() - 1);
+		} else if (objeto.equals("tranca")) {
+			return trancas.get(trancas.size() - 1);
+		} else if (objeto.equals("totem")) {
+			return redeDeTotems.get(redeDeTotems.size() - 1);
+		} else {
+			return null;
+		}
 	}
 
 	public static String bicicletaRedeMock() {

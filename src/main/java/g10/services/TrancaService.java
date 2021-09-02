@@ -13,14 +13,17 @@ public class TrancaService {
 
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
+	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
 
 	public static Tranca validarPostTranca(String body) {
 		Gson gson = new Gson();
 		Tranca tranca = gson.fromJson(body, Tranca.class);
-		Tranca trancaNova = new Tranca(tranca.getNumero(), tranca.getLocalizacao(), tranca.getAnoDeFabricacao(),
-				tranca.getModelo());
+		if (numeros.matcher(tranca.getAnoDeFabricacao()).matches()) {
+			return tranca;
 
-		return trancaNova;
+		} else {
+			return null;
+		}
 	}
 
 	public static Tranca acharTrancaPorId(String id, List<Tranca> trancas) {

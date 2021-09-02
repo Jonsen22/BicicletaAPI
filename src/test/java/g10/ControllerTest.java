@@ -2,10 +2,7 @@ package g10;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.text.MessageFormat;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterAll;
@@ -13,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import g10.entities.Bicicleta;
-import g10.entities.BicicletaStatus;
+import g10.entities.Tranca;
 import g10.util.JavalinApp;
 import io.javalin.http.Context;
 import kong.unirest.HttpResponse;
@@ -22,7 +19,6 @@ import kong.unirest.Unirest;
 
 public class ControllerTest {
 	private static JavalinApp app = new JavalinApp();
-//	private Controller controller = mock(Controller.class);
 	private Context ctx = mock(Context.class);
 
 	@BeforeAll
@@ -75,7 +71,7 @@ public class ControllerTest {
 	
 	@Test 
 	void getBicicletaByIdCorrect() {
-		String id = Controller.controllerMock().getId();
+		String id = ((Bicicleta) Controller.bicicletaAddMock("bicicleta")).getId();
 		HttpResponse<JsonNode> response = Unirest.get("http://localhost:7010/bicicleta/"+id)
 				.asJson();
 		
@@ -84,7 +80,7 @@ public class ControllerTest {
 	
 	@Test
 	void putBicicletaCorrect() {
-		Bicicleta test = Controller.controllerMock();
+		Bicicleta test = (Bicicleta) Controller.bicicletaAddMock("bicicleta");
 		test.setMarca("nsei");
 		test.setAno("3000");
 		HttpResponse<String> response = Unirest.put("http://localhost:7010/bicicleta/"+test.getId())
@@ -105,7 +101,7 @@ public class ControllerTest {
 
 	@Test
 	void deleteBicicletaCorrect() {
-		Bicicleta test = Controller.bicicletaMockDelete();
+		Bicicleta test = Controller.bicicletaUnicaMock();
 		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
 				.asString();
 		assertEquals(200, response.getStatus());
@@ -113,21 +109,21 @@ public class ControllerTest {
 	
 	@Test
 	void deleteBicicletaIncorrect403Presa() {
-		Bicicleta test = Controller.controllerMock();
+		Bicicleta test = (Bicicleta) Controller.bicicletaAddMock("bicicleta");
 		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
 				.asString();
 		assertEquals(403, response.getStatus());
 	}
 
 
-	@Test
-	void deleteBicicletaIncorret403Status() {
-		Bicicleta test = Controller.bicicletaMockDelete();
-		test.setStatus(BicicletaStatus.EM_USO.getStatus());
-		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
-				.asString();
-		assertEquals(403, response.getStatus());
-	}
+//	@Test
+//	void deleteBicicletaIncorret403Status() {
+//		Bicicleta test = Controller.bicicletaAddMock();
+//		test.setStatus(BicicletaStatus.EM_USO.getStatus());
+//		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
+//				.asString();
+//		assertEquals(403, response.getStatus());
+//	}
 	
 	@Test
 	void deleteBicicletaIncorret404() {
@@ -139,20 +135,79 @@ public class ControllerTest {
 	@Test
 	void postBicicletaNaRedeCorrect() {
 		String ids = Controller.bicicletaRedeMock();
-//		String msg = MessageFormat.format("{\"idTranca\":\"{0}\",\"idBicicleta\":\"{1}\"}", ids[1], ids[0]);
-//		System.out.println(msg);
 		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/bicicleta/integrarNaRede")
 				.body(ids)
 				.asJson();
 		assertEquals(200, response.getStatus());
 	}
 	
-//	@Test
-//	void postBicicletaNaRedeIncorrect404() {
-//		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/bicicleta/integrarNaRede")
-//				.body("{\"idTranca\":\"6417b751-ad3a-4bcd-b4bc-1bb5fc9850b0\",\"idBicicleta\":\"614e3884-e95a-4b52-97f1-f9600e6723a7\"}")
-//				.asJson();
-//		
-//		assertEquals(404, response.getStatus());
-//	}
+	@Test
+	void postBicicletaNaRedeIncorrect404() {
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/bicicleta/integrarNaRede")
+				.body("{\"idTranca\":\"6417b751-ad3a-4bcd-b4bc-1bb5fc9850b0\",\"idBicicleta\":\"614e3884-e95a-4b52-97f1-f9600e6723a7\"}")
+				.asJson();
+		
+		assertEquals(404, response.getStatus());
+	}
+	
+	@Test
+	void postBicicletaAlterarStatusCorrect() {
+		Bicicleta test = Controller.bicicletaUnicaMock();
+		String[] status = {"DISPONIVEL","EM_USO","REPARO_SOLICITADO","EM_REPARO","APOSENTADA"};
+		for(int i = 0; i < status.length; i++) {
+			HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/bicicleta/"+test.getId()+"/status/"+status[i])
+					.asJson();
+			assertEquals(200, response.getStatus());			
+		}
+	}
+	
+	@Test
+	void postBicicletaAlterarStatusIncorrect422() {
+		Bicicleta test = Controller.bicicletaUnicaMock();
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/bicicleta/"+test.getId()+"/status/quebrada")
+				.asJson();
+		assertEquals(422, response.getStatus());
+	}
+	
+	@Test
+	void postBicicletaAlterarStatusIncorrect404() {
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/bicicleta/"+UUID.randomUUID()+"/status/disponivel")
+				.asJson();
+		assertEquals(404, response.getStatus());
+	}
+	@Test
+	void getAllTrancasCorrect() {
+		HttpResponse<JsonNode> response = Unirest.get("http://localhost:7010/tranca")
+				.header("accept", "application/json").asJson();
+		assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	void postTrancaCorect() {
+		Tranca trancaT = new Tranca(1, "teste","3000","nsei");
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/tranca").body(trancaT).asJson();
+		assertEquals(200, response.getStatus());
+	}
+	@Test
+	void postTrancaIncorect422() {
+		Tranca trancaT = new Tranca(1, "teste","adwad","nsei");
+		HttpResponse<JsonNode> response = Unirest.post("http://localhost:7010/tranca").body(trancaT).asJson();
+		assertEquals(422, response.getStatus());
+	}
+	
+	@Test 
+	void getTrancaByIdCorrect() {
+		String id = ((Tranca) Controller.bicicletaAddMock("tranca")).getId();
+		HttpResponse<JsonNode> response = Unirest.get("http://localhost:7010/tranca/"+id)
+				.asJson();
+		
+		assertEquals(200, response.getStatus());
+	}
+	@Test 
+	void getTrancaByIdIncorrect404() {
+		HttpResponse<JsonNode> response = Unirest.get("http://localhost:7010/tranca/3214123")
+				.asJson();
+		
+		assertEquals(404, response.getStatus());
+	}
 }
