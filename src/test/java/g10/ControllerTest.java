@@ -91,13 +91,6 @@ public class ControllerTest {
 	}
 	
 	@Test
-	void putBicicletaIncorret404() {
-		HttpResponse<String> response = Unirest.put("http://localhost:7010/bicicleta/"+UUID.randomUUID())
-				.asString();
-		assertEquals(404, response.getStatus());
-	}
-
-	@Test
 	void deleteBicicletaCorrect() {
 		Bicicleta test = Controller.bicicletaUnicaMock();
 		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+test.getId())
@@ -123,12 +116,6 @@ public class ControllerTest {
 		assertEquals(403, response.getStatus());
 	}
 	
-	@Test
-	void deleteBicicletaIncorret404() {
-		HttpResponse<String> response = Unirest.delete("http://localhost:7010/bicicleta/"+UUID.randomUUID())
-				.asString();
-		assertEquals(404, response.getStatus());
-	}
 	
 	@Test
 	void postBicicletaNaRedeCorrect() {
@@ -219,12 +206,6 @@ public class ControllerTest {
 
 	}
 	
-	@Test
-	void putTrancaIncorret404() {
-		HttpResponse<String> response = Unirest.put("http://localhost:7010/tranca/"+UUID.randomUUID())
-				.asString();
-		assertEquals(404, response.getStatus());
-	}
 	
 	@Test
 	void getTrancaBicicletaCorrect() {
@@ -256,12 +237,6 @@ public class ControllerTest {
 		HttpResponse<String> response = Unirest.delete("http://localhost:7010/tranca/"+test.getId())
 				.asString();
 		assertEquals(403, response.getStatus());
-	}
-	@Test
-	void deleteTrancaIncorrect404() {
-		HttpResponse<String> response = Unirest.delete("http://localhost:7010/tranca/"+UUID.randomUUID())
-				.asString();
-		assertEquals(404, response.getStatus());
 	}
 	
 	@Test
@@ -320,8 +295,60 @@ public class ControllerTest {
 		assertEquals(403, response.getStatus());
 	}
 	@Test
-	void deleteTotemIncorrect404() {
-		HttpResponse<String> response = Unirest.delete("http://localhost:7010/totem/"+UUID.randomUUID())
+	void deleteObjectIncorrect404() {
+		String[] obj = {"bicicleta", "tranca", "totem"};
+		for(int i = 0; i < obj.length; i++) {
+			HttpResponse<String> response = Unirest.delete("http://localhost:7010/"+obj[i]+"/"+UUID.randomUUID())
+					.asString();
+			assertEquals(404, response.getStatus());			
+		}
+	}
+	
+	@Test
+	void putTotemCorrect() {
+		Totem test = (Totem) Controller.bicicletaAddMock("totem");
+		HttpResponse<String> response = Unirest.put("http://localhost:7010/totem/"+test.getId())
+				.body("{\"localizacao\":\"novo\"}")
+				.asString();
+		assertEquals(200, response.getStatus());
+	}
+	@Test
+	void putTotemIncorrect404() {
+		String[] obj = {"bicicleta", "tranca", "totem"};
+		for(int i = 0; i < obj.length; i++) {
+		HttpResponse<String> response = Unirest.put("http://localhost:7010/"+obj[i]+"/"+UUID.randomUUID())
+				.body("{\"localizacao\":\"novo\"}")
+				.asString();
+		assertEquals(404, response.getStatus());
+		}
+	}
+	
+	@Test
+	void getTotemTrancasCorrect() {
+		Totem test = (Totem) Controller.bicicletaAddMock("totem");
+		HttpResponse<String> response = Unirest.get("http://localhost:7010/totem/"+test.getId()+"/trancas")
+				.asString();
+		assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	void getTotemTrancasIncorrect404() {
+		HttpResponse<String> response = Unirest.get("http://localhost:7010/totem/"+UUID.randomUUID()+"/trancas")
+				.asString();
+		assertEquals(404, response.getStatus());
+	}
+	
+	@Test
+	void getTotemBicicletasCorrect() {
+		Totem test = (Totem) Controller.bicicletaAddMock("totem");
+		HttpResponse<String> response = Unirest.get("http://localhost:7010/totem/"+test.getId()+"/bicicletas")
+				.asString();
+		assertEquals(200, response.getStatus());
+	}
+	
+	@Test
+	void getTotemBicicletasIncorrect404() {
+		HttpResponse<String> response = Unirest.get("http://localhost:7010/totem/"+UUID.randomUUID()+"/bicicletas")
 				.asString();
 		assertEquals(404, response.getStatus());
 	}
