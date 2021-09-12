@@ -336,13 +336,6 @@ public class ControllerTest {
 		assertEquals(200, response.getStatus());
 	}
 	
-	@Test
-	void getTotemTrancasIncorrect404() {
-		Totem test = (Totem) BicicletaService.addMock("totem");
-		HttpResponse<String> response = Unirest.get("http://localhost:7010/totem/"+UUID.randomUUID()+"/trancas")
-				.asString();
-		assertEquals(404, response.getStatus());
-	}
 	
 	@Test
 	void getTotemBicicletasCorrect() {
