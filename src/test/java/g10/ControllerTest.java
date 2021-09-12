@@ -1,16 +1,13 @@
 package g10;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
-import java.lang.ModuleLayer.Controller;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import g10.controllers.BicicletaController;
 import g10.entities.Bicicleta;
 import g10.entities.BicicletaStatus;
 import g10.entities.Totem;
@@ -19,14 +16,13 @@ import g10.services.BicicletaService;
 import g10.services.TotemService;
 import g10.services.TrancaService;
 import g10.util.JavalinApp;
-import io.javalin.http.Context;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 
 public class ControllerTest {
 	private static JavalinApp app = new JavalinApp();
-	private Context ctx = mock(Context.class);
+//	private Context ctx = mock(Context.class);
 
 	@BeforeAll
 	static void init() {
@@ -37,13 +33,6 @@ public class ControllerTest {
 	static void afterAll() {
 		app.stop();
 	}
-
-//	@Test
-//	void getEchoTest() {
-//		HttpResponse response = Unirest.get("http://localhost:7010/xd").asString();
-//		assertEquals(200, response.getStatus());
-//		assertEquals("xd xd xd", response.getBody());
-//	}
 
 	@Test
 	void getAllBicicletasCorrect() {
