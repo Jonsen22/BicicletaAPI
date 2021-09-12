@@ -83,5 +83,29 @@ public class TrancaService {
 		}
 		return false;
 	}
+	
+	public static void addTranca(Tranca tranca) {
+		trancas.add(tranca);
+	}
+	
+	public static Tranca getTranca(int i) {
+		return trancas.get(i);
+	}
+	
+	public static void clearTrancas() {
+		trancas.clear();
+	}
+	
+	public static int sizeTrancas() {
+		return trancas.size();
+	}
+	
+	public static Tranca trancaUnicaMock() {
+		trancas.clear();
+		Tranca trancaT = new Tranca(4,"teste323","5000","teste5122");		
+		trancas.add(trancaT);
+		return trancaT;
+	}
+
 
 }

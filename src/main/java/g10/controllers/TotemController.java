@@ -12,8 +12,6 @@ import io.javalin.http.Context;
 public class TotemController {
 	private TotemController() {}
 	
-	private static final String DADOS_INVALIDOS = "Dados inválidos";
-	private static final String DADOS_CADASTRADOS = "Dados cadastrados";
 	private static final String NAO_ENCONTRADO = "Não encontrado";
 	
 	public static void getTotem(Context ctx) {

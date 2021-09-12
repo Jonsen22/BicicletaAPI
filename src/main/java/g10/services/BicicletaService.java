@@ -1,12 +1,19 @@
 package g10.services;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import g10.entities.Bicicleta;
+import g10.entities.BicicletaStatus;
+import g10.entities.Totem;
+import g10.entities.Tranca;
+import g10.entities.TrancaStatus;
 
 public class BicicletaService {
 	
@@ -80,5 +87,66 @@ public class BicicletaService {
 		return bicicletas.stream().filter(bicicleta -> idTranca.equals(bicicleta.getId()))
 				.findFirst().orElse(null);
 	}
+	
+	public static void cleanBicicletas() {
+		bicicletas.clear();
+	}
+	
+	public static int sizeBicicletas() {
+		return bicicletas.size();
+	}
+	
+	public static Bicicleta bicicletaUnicaMock() {
+		bicicletas.clear();
+		Bicicleta bicicletaT = new Bicicleta("teste", "teste2", "2000", 3);
+		bicicletaT.setStatus(BicicletaStatus.APOSENTADA.getStatus());
+		bicicletas.add(bicicletaT);
+		return bicicletaT;
+	}
+	
+	public static Object addMock(String objeto) {
+		bicicletas.clear();
+		TrancaService.clearTrancas();
+		TotemService.clearTotems();
+		Bicicleta bicicletaT = new Bicicleta("teste3", "teste4", "2000", 3);
+		bicicletas.add(bicicletaT);
+		Tranca trancaT = new Tranca(1, "Esquina1", "2000", "n sei");
+		trancaT.setBicicleta(bicicletaT.getId());
+		TrancaService.addTranca(trancaT);
+		Totem totemT = new Totem("Esquina1");
+		totemT.addBicicleta(bicicletaT);
+		totemT.addTranca(trancaT);
+		TotemService.addTotem(totemT);
+		if (objeto.equals("bicicleta")) {
+			return bicicletas.get(bicicletas.size() - 1);
+		} else if (objeto.equals("tranca")) {
+			return TrancaService.getTranca(TrancaService.sizeTrancas() - 1);
+		} else if (objeto.equals("totem")) {
+			return TotemService.getTotem(TotemService.sizeTotems() - 1);
+		} else {
+			return null;
+		}
+	}
+
+	public static String bicicletaRedeMock() {
+		Bicicleta bicicletaT = new Bicicleta("test5e", "teste6", "2000", 3);
+		bicicletas.add(bicicletaT);
+		Tranca trancaT = new Tranca(1, "Esquina2", "2000", "n sei");
+		trancaT.setStatus(TrancaStatus.LIVRE.getStatus());
+		TrancaService.addTranca(trancaT);
+		Totem totemT = new Totem("Esquina2");
+		totemT.addTranca(trancaT);
+		TotemService.addTotem(totemT);
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Map<String, String> items = new LinkedHashMap<>();
+
+		items.put("idTranca", trancaT.getId());
+		items.put("idBicicleta", bicicletaT.getId());
+
+		return gson.toJson(items);
+	}
+
+
 
 }

@@ -132,4 +132,23 @@ public class TotemService {
 		return redeDeTotems.stream().filter(totem -> id.equals(totem.getId())).findAny().orElse(null);
 	}
 
+	public static int sizeTotems() {
+		return redeDeTotems.size();
+	}
+
+	public static void clearTotems() {
+		redeDeTotems.clear();
+	}
+
+	public static Totem getTotem(int i) {
+		return redeDeTotems.get(i);
+	}
+
+	public static Totem totemUnicoMock() {
+		redeDeTotems.clear();
+		Totem totemT = new Totem("teste3213");
+		redeDeTotems.add(totemT);
+		return totemT;
+	}
+
 }
