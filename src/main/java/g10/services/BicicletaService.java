@@ -1,5 +1,6 @@
 package g10.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -11,9 +12,14 @@ public class BicicletaService {
 	
 	private BicicletaService() {}
 
+	private static List<Bicicleta> bicicletas = new ArrayList<Bicicleta>();
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
 	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
+	
+	public static String getAllBicicletas() {
+		return bicicletas.toString();
+	}
 
 	public static Bicicleta validarPostBicicleta(String body) {
 		Gson gson = new Gson();
@@ -21,7 +27,7 @@ public class BicicletaService {
 		if (numeros.matcher(bicicleta.getAno()).matches()) {
 			Bicicleta BikeNova = new Bicicleta(bicicleta.getMarca(), bicicleta.getModelo(), bicicleta.getAno(),
 					bicicleta.getNumero());
-
+			bicicletas.add(BikeNova);
 			return BikeNova ;
 
 		} else {
@@ -29,7 +35,7 @@ public class BicicletaService {
 		}
 	}
 
-	public static Bicicleta acharBicicletaPorId(String id, List<Bicicleta> bicicletas) {
+	public static Bicicleta acharBicicletaPorId(String id) {
 		Bicicleta temp = null;
 		if (p.matcher(id).matches() == true) {
 			temp = bicicletas.stream().filter(bicicleta -> id.equals(bicicleta.getId())).findAny().orElse(null);
@@ -56,18 +62,23 @@ public class BicicletaService {
 		return bicicletaAtualizada;
 	}
 
-	public static void atualizarListaBicicletas(Bicicleta bicicletaAtualizada, List<Bicicleta> bicicletas) {
+	public static void atualizarListaBicicletas(Bicicleta bicicletaAtualizada) {
 		for (int i = 0; i < bicicletas.size(); i++) {
 			if (bicicletas.get(i).getId().equals(bicicletaAtualizada.getId()))
 				bicicletas.set(i, bicicletaAtualizada);
 		}
 	}
 
-	public static void deletarBicicleta(Bicicleta bicicleta, List<Bicicleta> bicicletas) {
+	public static void deletarBicicleta(Bicicleta bicicleta) {
 		for (int i = 0; i < bicicletas.size(); i++) {
 			if (bicicletas.get(i).getId().equals(bicicleta.getId()))
 				bicicletas.get(i).setStatus("excluída");
 		}
+	}
+
+	public static Bicicleta getTrancaBicicleta(String idTranca) {
+		return bicicletas.stream().filter(bicicleta -> idTranca.equals(bicicleta.getId()))
+				.findFirst().orElse(null);
 	}
 
 }

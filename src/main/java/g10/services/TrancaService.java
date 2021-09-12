@@ -1,5 +1,6 @@
 package g10.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -10,10 +11,14 @@ import g10.entities.Tranca;
 public class TrancaService {
 	
 	private TrancaService() {}
-
+	private static List<Tranca> trancas = new ArrayList<Tranca>();
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
 	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
+	
+	public static String getAllTrancas() {
+		return trancas.toString();
+	}
 
 	public static Tranca validarPostTranca(String body) {
 		Gson gson = new Gson();
@@ -21,7 +26,8 @@ public class TrancaService {
 		if (numeros.matcher(tranca.getAnoDeFabricacao()).matches()) {
 			Tranca trancaNova = new Tranca(tranca.getNumero(), tranca.getLocalizacao(), tranca.getAnoDeFabricacao(),
 					tranca.getModelo());
-
+			
+			trancas.add(trancaNova);
 			return trancaNova;
 
 		} else {
@@ -29,7 +35,7 @@ public class TrancaService {
 		}
 	}
 
-	public static Tranca acharTrancaPorId(String id, List<Tranca> trancas) {
+	public static Tranca acharTrancaPorId(String id) {
 		Tranca temp = null;
 		if (p.matcher(id).matches() == true) {
 			temp = trancas.stream().filter(tranca -> id.equals(tranca.getId())).findAny().orElse(null);
@@ -56,21 +62,21 @@ public class TrancaService {
 		return trancaAtualizada;
 	}
 
-	public static void atualizarListaTrancas(Tranca trancaAtualizada, List<Tranca> trancas) {
+	public static void atualizarListaTrancas(Tranca trancaAtualizada) {
 		for (int i = 0; i < trancas.size(); i++) {
 			if (trancas.get(i).getId().equals(trancaAtualizada.getId()))
 				trancas.set(i, trancaAtualizada);
 		}
 	}
 
-	public static void deletarTranca(Tranca tranca, List<Tranca> trancas) {
+	public static void deletarTranca(Tranca tranca) {
 		for (int i = 0; i < trancas.size(); i++) {
 			if (trancas.get(i).getId().equals(tranca.getId()))
 				trancas.get(i).setStatus("excluída");
 		}
 	}
 
-	public static boolean trancaComBicicleta(List<Tranca> trancas, String id) {
+	public static boolean trancaComBicicleta( String id) {
 		for (int i = 0; i < trancas.size(); i++) {
 			if (trancas.get(i).getBicicleta().equals(id))
 				return true;

@@ -6,10 +6,9 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 import static io.javalin.apibuilder.ApiBuilder.put;
 
-import java.util.List;
-
-import g10.Controller;
-import g10.entities.Bicicleta;
+import g10.controllers.BicicletaController;
+import g10.controllers.TotemController;
+import g10.controllers.TrancaController;
 import io.javalin.Javalin;
 
 public class JavalinApp {
@@ -21,33 +20,33 @@ public class JavalinApp {
 			Javalin.create(config -> config.defaultContentType = "application/json")
 			.routes(() -> {				
 				//bicicleta
-				path("/bicicleta", () -> get(Controller::getBicicleta));
-				path("/bicicleta", () -> post(Controller::postBicicleta));
-				path(BICICLETA_ID, () -> get(Controller::getBicicletaById));
-				path(BICICLETA_ID, () -> put(Controller::putBicicleta));
-				path(BICICLETA_ID, () -> delete(Controller::deleteBicicleta));
-				path("/bicicleta/:id/status/:acao", () -> post(Controller::postBicicletaAlterarStatus));
-				path("/bicicleta/integrarNaRede", () -> post(Controller::postBicicletaNaRede));
-				path("/bicicleta/retirarDaRede", () -> post(Controller::postBicicletaRetirarRede));
+				path("/bicicleta", () -> get(BicicletaController::getBicicleta));
+				path("/bicicleta", () -> post(BicicletaController::postBicicleta));
+				path(BICICLETA_ID, () -> get(BicicletaController::getBicicletaById));
+				path(BICICLETA_ID, () -> put(BicicletaController::putBicicleta));
+				path(BICICLETA_ID, () -> delete(BicicletaController::deleteBicicleta));
+				path("/bicicleta/:id/status/:acao", () -> post(BicicletaController::postBicicletaAlterarStatus));
+				path("/bicicleta/integrarNaRede", () -> post(BicicletaController::postBicicletaNaRede));
+				path("/bicicleta/retirarDaRede", () -> post(BicicletaController::postBicicletaRetirarRede));
 				
 				//totem
-				path("/totem", () -> get(Controller::getTotem));
-				path("/totem", () -> post(Controller::postTotem));
-				path("/totem/:id", () -> put(Controller::putTotem));
-				path("/totem/:id", () -> delete(Controller::deleteTotem));
-				path("/totem/:id/trancas", () -> get(Controller::getTotemTrancas));
-				path("/totem/:id/bicicletas", () -> get(Controller::getTotemBicicletas));
+				path("/totem", () -> get(TotemController::getTotem));
+				path("/totem", () -> post(TotemController::postTotem));
+				path("/totem/:id", () -> put(TotemController::putTotem));
+				path("/totem/:id", () -> delete(TotemController::deleteTotem));
+				path("/totem/:id/trancas", () -> get(TotemController::getTotemTrancas));
+				path("/totem/:id/bicicletas", () -> get(TotemController::getTotemBicicletas));
 				
 				//tranca
-				path("/tranca", () -> get(Controller::getTranca));
-				path("/tranca", () -> post(Controller::postTranca));
-				path(TRANCA_ID, () -> get(Controller::getTrancaById));
-				path(TRANCA_ID, () -> put(Controller::putTranca));
-				path(TRANCA_ID, () -> delete(Controller::deleteTranca));
-				path("/tranca/:id/bicicleta", () -> get(Controller::getTrancaBicicleta));
-				path("/tranca/:id/status/:acao", () -> post(Controller::postTrancaAlterarStatus));
-				path("/tranca/integrarNaRede", () -> post(Controller::postTrancaNaRede));
-				path("/tranca/retirarDaRede", () -> post(Controller::postTrancaRetirarRede));
+				path("/tranca", () -> get(TrancaController::getTranca));
+				path("/tranca", () -> post(TrancaController::postTranca));
+				path(TRANCA_ID, () -> get(TrancaController::getTrancaById));
+				path(TRANCA_ID, () -> put(TrancaController::putTranca));
+				path(TRANCA_ID, () -> delete(TrancaController::deleteTranca));
+				path("/tranca/:id/bicicleta", () -> get(TrancaController::getTrancaBicicleta));
+				path("/tranca/:id/status/:acao", () -> post(TrancaController::postTrancaAlterarStatus));
+				path("/tranca/integrarNaRede", () -> post(TrancaController::postTrancaNaRede));
+				path("/tranca/retirarDaRede", () -> post(TrancaController::postTrancaRetirarRede));
 			});
 	
 	public void start(int port) {
