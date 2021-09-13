@@ -9,11 +9,13 @@ import g10.services.TotemService;
 import g10.services.TrancaService;
 import g10.util.JsonHelper;
 import io.javalin.http.Context;
+import kong.unirest.Unirest;
 
 public class BicicletaController {
-	
-	private BicicletaController() {}
-	
+
+	private BicicletaController() {
+	}
+
 	private static final String DADOS_INVALIDOS = "Dados inválidos";
 	private static final String DADOS_CADASTRADOS = "Dados cadastrados";
 	private static final String NAO_ENCONTRADO = "Não encontrado";
@@ -54,18 +56,25 @@ public class BicicletaController {
 
 				if (StatusBicicleta.equals(BicicletaStatus.EM_USO.getStatus())) {
 					// Passa para UC04 - devolver bicicleta (A4)
-				} else {
-
-					bicicletaProcurada.setStatus(BicicletaStatus.DISPONIVEL.getStatus());
-					trancaProcurada.setBicicleta(bicicletaProcurada.getId());
-					trancaProcurada.setStatus(TrancaStatus.OCUPADA.getStatus());
-					
-					//procurar Ids[1] se achar adicionar na tranca da rede 
-					TotemService.addBicicletaRede(Ids[1], bicicletaProcurada);
-					// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
-					ctx.status(200);
-					ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
+					Unirest.post("https://g11-pm.herokuapp.com/devolucao")
+							.body("{\"idTranca\":\" " + Ids[1] + " \",\"idBicicleta\":\"" + Ids[0] + " \"}").asJson();
 				}
+				bicicletaProcurada.setStatus(BicicletaStatus.DISPONIVEL.getStatus());
+				trancaProcurada.setBicicleta(bicicletaProcurada.getId());
+				trancaProcurada.setStatus(TrancaStatus.OCUPADA.getStatus());
+
+				TotemService.addBicicletaRede(Ids[1], bicicletaProcurada);
+				// enviar email
+				String emailBody = BicicletaService.emailBody(bicicletaProcurada, trancaProcurada.getLocalizacao(),
+						"Inclusão");
+				Unirest.post("https://uniriobike.herokuapp.com/enviarEmail").body(emailBody).asJson()
+						.ifFailure(response -> {
+							ctx.result(JsonHelper.jsonCodigo(Ids[0], "500", response.getParsingError().toString()));
+						}).ifSuccess(response -> {
+							ctx.status(200);
+							ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
+						});
+
 			} else {
 				ctx.status(422);
 				ctx.result(JsonHelper.jsonCodigo(Ids[0], "422", DADOS_INVALIDOS));
@@ -88,12 +97,19 @@ public class BicicletaController {
 					&& trancaProcurada.getBicicleta().equals(bicicletaProcurada.getId())) {
 				trancaProcurada.setStatus(TrancaStatus.LIVRE.getStatus());
 				trancaProcurada.setBicicleta(null);
-				
+
 				TotemService.excluirBicicletaRede(bicicletaProcurada);
-				
+
 				// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
-				ctx.status(200);
-				ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
+				String emailBody = BicicletaService.emailBody(bicicletaProcurada, trancaProcurada.getLocalizacao(),
+						"Retirada");
+				Unirest.post("https://uniriobike.herokuapp.com/enviarEmail").body(emailBody).asJson()
+						.ifFailure(response -> {
+							ctx.result(JsonHelper.jsonCodigo(Ids[0], "500", response.getParsingError().toString()));
+						}).ifSuccess(response -> {
+							ctx.status(200);
+							ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
+						});
 			} else {
 				ctx.status(422);
 				ctx.result(JsonHelper.jsonCodigo(Ids[0], "422",
@@ -126,7 +142,7 @@ public class BicicletaController {
 			Bicicleta atualizada = BicicletaService.atualizarBicicleta(body, temp);
 			BicicletaService.atualizarListaBicicletas(atualizada);
 			TotemService.atualizarBicicletaRede(atualizada);
-			
+
 			ctx.status(200);
 			ctx.result(atualizada.toString());
 
@@ -147,7 +163,6 @@ public class BicicletaController {
 					BicicletaService.deletarBicicleta(temp);
 					ctx.status(200);
 					ctx.result(JsonHelper.jsonCodigo(id, "200", "Bicicleta removida"));
-					// TODO excluir a bicicleta da rede
 				} else {
 					ctx.status(403);
 					ctx.result(JsonHelper.jsonCodigo(id, "403",

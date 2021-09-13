@@ -1,6 +1,8 @@
 package g10.services;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -9,13 +11,16 @@ import com.google.gson.Gson;
 import g10.entities.Tranca;
 
 public class TrancaService {
-	
-	private TrancaService() {}
+
+	private TrancaService() {
+	}
+
 	private static List<Tranca> trancas = new ArrayList<Tranca>();
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
 	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
-	
+	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
 	public static String getAllTrancas() {
 		return trancas.toString();
 	}
@@ -26,7 +31,7 @@ public class TrancaService {
 		if (numeros.matcher(tranca.getAnoDeFabricacao()).matches()) {
 			Tranca trancaNova = new Tranca(tranca.getNumero(), tranca.getLocalizacao(), tranca.getAnoDeFabricacao(),
 					tranca.getModelo());
-			
+
 			trancas.add(trancaNova);
 			return trancaNova;
 
@@ -76,36 +81,42 @@ public class TrancaService {
 		}
 	}
 
-	public static boolean trancaComBicicleta( String id) {
+	public static boolean trancaComBicicleta(String id) {
 		for (int i = 0; i < trancas.size(); i++) {
 			if (trancas.get(i).getBicicleta().equals(id))
 				return true;
 		}
 		return false;
 	}
-	
+
 	public static void addTranca(Tranca tranca) {
 		trancas.add(tranca);
 	}
-	
+
 	public static Tranca getTranca(int i) {
 		return trancas.get(i);
 	}
-	
+
 	public static void clearTrancas() {
 		trancas.clear();
 	}
-	
+
 	public static int sizeTrancas() {
 		return trancas.size();
 	}
-	
+
 	public static Tranca trancaUnicaMock() {
 		trancas.clear();
-		Tranca trancaT = new Tranca(4,"teste323","5000","teste5122");		
+		Tranca trancaT = new Tranca(4, "teste323", "5000", "teste5122");
 		trancas.add(trancaT);
 		return trancaT;
 	}
 
+	public static String emailBody(String id, String localizacao, String tipoDeAcao) {
+		Date date = new Date();
+		return "{\"email\":\"gabriel.jansen222@gmail.com\",\"mensagem\":\"" + tipoDeAcao
+				+ " de Tranca na rede de Totems \\nTranca: " + id + " \\nHoras: " + formatter.format(date)
+				+ " \\nLocal: " + localizacao + "\"}";
+	}
 
 }

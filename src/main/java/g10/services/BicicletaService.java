@@ -1,6 +1,8 @@
 package g10.services;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +18,16 @@ import g10.entities.Tranca;
 import g10.entities.TrancaStatus;
 
 public class BicicletaService {
-	
-	private BicicletaService() {}
+
+	private BicicletaService() {
+	}
 
 	private static List<Bicicleta> bicicletas = new ArrayList<Bicicleta>();
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
 	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
-	
+	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
 	public static String getAllBicicletas() {
 		return bicicletas.toString();
 	}
@@ -35,7 +39,7 @@ public class BicicletaService {
 			Bicicleta BikeNova = new Bicicleta(bicicleta.getMarca(), bicicleta.getModelo(), bicicleta.getAno(),
 					bicicleta.getNumero());
 			bicicletas.add(BikeNova);
-			return BikeNova ;
+			return BikeNova;
 
 		} else {
 			return null;
@@ -84,18 +88,17 @@ public class BicicletaService {
 	}
 
 	public static Bicicleta getTrancaBicicleta(String idTranca) {
-		return bicicletas.stream().filter(bicicleta -> idTranca.equals(bicicleta.getId()))
-				.findFirst().orElse(null);
+		return bicicletas.stream().filter(bicicleta -> idTranca.equals(bicicleta.getId())).findFirst().orElse(null);
 	}
-	
+
 	public static void cleanBicicletas() {
 		bicicletas.clear();
 	}
-	
+
 	public static int sizeBicicletas() {
 		return bicicletas.size();
 	}
-	
+
 	public static Bicicleta bicicletaUnicaMock() {
 		bicicletas.clear();
 		Bicicleta bicicletaT = new Bicicleta("teste", "teste2", "2000", 3);
@@ -103,7 +106,7 @@ public class BicicletaService {
 		bicicletas.add(bicicletaT);
 		return bicicletaT;
 	}
-	
+
 	public static Object addMock(String objeto) {
 		bicicletas.clear();
 		TrancaService.clearTrancas();
@@ -147,6 +150,11 @@ public class BicicletaService {
 		return gson.toJson(items);
 	}
 
-
+	public static String emailBody(Bicicleta bicicletaProcurada, String localizacao, String tipoDeAcao) {
+		Date date = new Date();
+		return "{\"email\":\"gabriel.jansen222@gmail.com\",\"mensagem\":\"" + tipoDeAcao
+				+ " de Bicicleta na rede de Totems \\nBicicleta: " + bicicletaProcurada.getId() + " \\nHoras: "
+				+ formatter.format(date) + " \\nLocal: " + localizacao + "\"}";
+	}
 
 }

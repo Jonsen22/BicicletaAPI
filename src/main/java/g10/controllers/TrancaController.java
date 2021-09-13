@@ -8,14 +8,16 @@ import g10.services.TotemService;
 import g10.services.TrancaService;
 import g10.util.JsonHelper;
 import io.javalin.http.Context;
+import kong.unirest.Unirest;
 
 public class TrancaController {
-	private TrancaController() {}
-	
+	private TrancaController() {
+	}
+
 	private static final String DADOS_INVALIDOS = "Dados inválidos";
 	private static final String DADOS_CADASTRADOS = "Dados cadastrados";
 	private static final String NAO_ENCONTRADO = "Não encontrado";
-	
+
 	public static void getTranca(Context ctx) {
 		ctx.result(TrancaService.getAllTrancas());
 	}
@@ -52,8 +54,8 @@ public class TrancaController {
 			Tranca atualizada = TrancaService.atualizarTranca(body, temp);
 
 			TrancaService.atualizarListaTrancas(atualizada);
-			// Atualizar na Rede de Totems		
-			TotemService.atualizarTrancaRede(atualizada);	
+			// Atualizar na Rede de Totems
+			TotemService.atualizarTrancaRede(atualizada);
 			ctx.status(200);
 			ctx.result(atualizada.toString());
 
@@ -85,8 +87,8 @@ public class TrancaController {
 	public static void getTrancaBicicleta(Context ctx) {
 		String id = ctx.pathParam("id");
 		Tranca tranca = TrancaService.acharTrancaPorId(id);
-		if (tranca != null) {	
-			Bicicleta temp = BicicletaService.getTrancaBicicleta(tranca.getBicicleta());	
+		if (tranca != null) {
+			Bicicleta temp = BicicletaService.getTrancaBicicleta(tranca.getBicicleta());
 			if (temp != null) {
 				ctx.status(200);
 				ctx.result(temp.toString());
@@ -150,10 +152,16 @@ public class TrancaController {
 		if (trancaProcurada != null) {
 			trancaProcurada.setStatus(TrancaStatus.LIVRE.getStatus());
 			TotemService.addTrancaRede(Ids[0], trancaProcurada);
-			
-			// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
-			ctx.status(200);
-			ctx.result(JsonHelper.jsonCodigo(Ids[1], "200", DADOS_CADASTRADOS));
+
+			String emailBody = TrancaService.emailBody(trancaProcurada.getId(), trancaProcurada.getLocalizacao(),
+					"Inclusão");
+			Unirest.post("https://uniriobike.herokuapp.com/enviarEmail").body(emailBody).asJson()
+					.ifFailure(response -> {
+						ctx.result(JsonHelper.jsonCodigo(Ids[0], "500", response.getParsingError().toString()));
+					}).ifSuccess(response -> {
+						ctx.status(200);
+						ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
+					});
 		} else {
 			ctx.status(422);
 			ctx.result(JsonHelper.jsonCodigo(Ids[1], "422", DADOS_INVALIDOS));
@@ -167,10 +175,17 @@ public class TrancaController {
 		if (trancaProcurada != null) {
 			if (trancaProcurada.getBicicleta() == null) {
 				if (trancaProcurada.getStatus().equals(TrancaStatus.REPARO_SOLICITADO.getStatus())) {
-					TotemService.deleteTrancaRede(trancaProcurada);					
+					TotemService.deleteTrancaRede(trancaProcurada);
 					// enviar email se falhar codigo de erro, se não sucesso ao cadastrar
-					ctx.status(200);
-					ctx.result(JsonHelper.jsonCodigo(Ids[1], "200", DADOS_CADASTRADOS));
+					String emailBody = TrancaService.emailBody(trancaProcurada.getId(),
+							trancaProcurada.getLocalizacao(), "Retirada");
+					Unirest.post("https://uniriobike.herokuapp.com/enviarEmail").body(emailBody).asJson()
+							.ifFailure(response -> {
+								ctx.result(JsonHelper.jsonCodigo(Ids[0], "500", response.getParsingError().toString()));
+							}).ifSuccess(response -> {
+								ctx.status(200);
+								ctx.result(JsonHelper.jsonCodigo(Ids[0], "200", DADOS_CADASTRADOS));
+							});
 				} else {
 					ctx.result(JsonHelper.jsonCodigo(Ids[1], "403",
 							"A tranca precisa estar aposentada ou com reparo solicitado"));
