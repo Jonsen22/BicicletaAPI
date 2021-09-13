@@ -19,7 +19,7 @@ public class TrancaService {
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
 	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
-	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 	public static String getAllTrancas() {
 		return trancas.toString();
@@ -114,6 +114,7 @@ public class TrancaService {
 
 	public static String emailBody(String id, String localizacao, String tipoDeAcao) {
 		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 		return "{\"email\":\"gabriel.jansen222@gmail.com\",\"mensagem\":\"" + tipoDeAcao
 				+ " de Tranca na rede de Totems \\nTranca: " + id + " \\nHoras: " + formatter.format(date)
 				+ " \\nLocal: " + localizacao + "\"}";

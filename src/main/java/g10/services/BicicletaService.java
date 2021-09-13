@@ -26,7 +26,7 @@ public class BicicletaService {
 	private static String regexUuid = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 	private static Pattern p = Pattern.compile(regexUuid);
 	private static Pattern numeros = Pattern.compile("-?\\d+(\\.\\d+)?");
-	private static SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private final static String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 	public static String getAllBicicletas() {
 		return bicicletas.toString();
@@ -152,6 +152,7 @@ public class BicicletaService {
 
 	public static String emailBody(Bicicleta bicicletaProcurada, String localizacao, String tipoDeAcao) {
 		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
 		return "{\"email\":\"gabriel.jansen222@gmail.com\",\"mensagem\":\"" + tipoDeAcao
 				+ " de Bicicleta na rede de Totems \\nBicicleta: " + bicicletaProcurada.getId() + " \\nHoras: "
 				+ formatter.format(date) + " \\nLocal: " + localizacao + "\"}";
